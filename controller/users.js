@@ -1,5 +1,5 @@
 import UsersModel from "../models/users.js";
-import ImagesModel from "../models/images.js";
+
 
 
 export const getAllUsers = async (req, res) => {
@@ -80,12 +80,19 @@ export const deleteOneUser = async (req, res) => {
 }
 
 export const changeAvatarUrl = async (req, res) => {
-    const newAvatarUrl = req.body.avatar
+    try {
+        const reqUserId = req.params.id
+        const newAvatarUrl = req.body.avatar
 
-    const changedUserAvatar = await UsersModel.findByIdAndUpdate(req.params.id, {avatar: newAvatarUrl}, {returnDocument: "after"})
+        const changedUser = await UsersModel.findByIdAndUpdate(reqUserId, {avatar: newAvatarUrl}, {returnDocument: "after"})
 
-    const {passwordHash:_, ...userData} = changedUserAvatar._doc
+        const {passwordHash:_, ...userData} = changedUser._doc
 
-    res.json(userData)
+        res.json(userData)
+    } catch (err) {
+        res.status(404).json({
+            message: 'Пользователь не найден'
+        })
+    }
 }
 

@@ -12,6 +12,8 @@ import checkAuth from "./services/checkAuth.js";
 import uploadFile from "./services/uploadFile.js";
 import {v2 as cloudinary} from 'cloudinary';
 import {addImages, deleteImages, getAllImages, setLikeImages} from "./controller/images.js";
+import {addPost, changePost, deletePost, getAllPosts, getOnePost, setLikePosts} from "./controller/posts.js";
+import {addPostComment, changePostComment, deletePostComment, getAllPostComments} from "./controller/postComments.js";
 
 const api = express()
 dotenv.config() //Функция - для доступа к env файлу
@@ -47,7 +49,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage})
 
-api.post('/upload', upload.single('photo'), uploadFile)
+api.post('/upload', upload.single('file'), uploadFile)
 
 
 
@@ -68,10 +70,28 @@ api.delete('/users/:id', deleteOneUser)
 
 
 //images
-api.get('/images', getAllImages)
-api.post('/images', addImages)
-api.delete('/images/:id', deleteImages)
-api.patch('/images/:id', setLikeImages)
+api.get('/images', checkAuth, getAllImages)
+api.post('/images', checkAuth, addImages)
+api.delete('/images/:id', checkAuth, deleteImages)
+api.patch('/images/like/:id', checkAuth, setLikeImages)
+
+//posts
+
+api.get('/posts', getAllPosts)
+api.get('/posts/:id', getOnePost)
+api.post('/posts', addPost)
+api.patch('/posts/:id', changePost)
+api.delete('/posts/:id', deletePost)
+api.patch('/posts/like/:id', setLikePosts)
+
+
+//postComment
+
+api.post('/comments', addPostComment)
+api.get('/comments', getAllPostComments)
+api.patch('/comments/:id', changePostComment)
+api.delete('/comments/:id', deletePostComment)
+
 
 
 //Функция запуска сервера
