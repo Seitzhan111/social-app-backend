@@ -96,3 +96,30 @@ export const changeAvatarUrl = async (req, res) => {
     }
 }
 
+export const deleteFriend = async (req, res) => {
+    try {
+
+        const friendId = req.body.friendId
+
+        const user = await UsersModel.findById(req.params.id)
+
+        const friend = await UsersModel.findById(friendId)
+
+        const changedUser = await UsersModel.findByIdAndUpdate(req.params.id, {
+            friends: user.friends.filter(item => item !== friendId)
+        }, {returnDocument: "after"})
+
+        await UsersModel.findByIdAndUpdate(friendId, {
+            friends: friend.friends.filter(item => item !== req.params.id)
+        }, {returnDocument: "after"})
+
+        const {passwordHash: _, ...userData} = changedUser._doc
+
+        res.json(userData)
+
+    } catch (err) {
+        res.status(404).json({
+            message: 'Пользователь не найден'
+        })
+    }
+}

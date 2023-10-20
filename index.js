@@ -6,7 +6,14 @@ import {loginUserValidation, registerUserValidation} from "./validations/validat
 import {login, register} from "./controller/auth.js";
 import validationResult from "./services/validationResul.js";
 import activeUser from "./controller/activeUser.js";
-import {changeAvatarUrl, changeOneUser, deleteOneUser, getAllUsers, getOneUser} from "./controller/users.js";
+import {
+    changeAvatarUrl,
+    changeOneUser,
+    deleteFriend,
+    deleteOneUser,
+    getAllUsers,
+    getOneUser
+} from "./controller/users.js";
 import multer from 'multer';
 import checkAuth from "./services/checkAuth.js";
 import uploadFile from "./services/uploadFile.js";
@@ -14,6 +21,7 @@ import {v2 as cloudinary} from 'cloudinary';
 import {addImages, deleteImages, getAllImages, setLikeImages} from "./controller/images.js";
 import {addPost, changePost, deletePost, getAllPosts, getOnePost, setLikePosts} from "./controller/posts.js";
 import {addPostComment, changePostComment, deletePostComment, getAllPostComments} from "./controller/postComments.js";
+import {addRequest, callRequest, getMyInvite, getMyRequest} from "./controller/request.js";
 
 const api = express()
 dotenv.config() //Функция - для доступа к env файлу
@@ -67,6 +75,7 @@ api.get('/users/:id', getOneUser)
 api.patch('/users/:id', changeOneUser)
 api.patch('/users/avatar/:id', changeAvatarUrl)
 api.delete('/users/:id', deleteOneUser)
+api.patch('/users/friend/:id', deleteFriend)
 
 
 //images
@@ -79,7 +88,7 @@ api.patch('/images/like/:id', checkAuth, setLikeImages)
 
 api.get('/posts', getAllPosts)
 api.get('/posts/:id', getOnePost)
-api.post('/posts', addPost)
+api.post('/posts', checkAuth, addPost)
 api.patch('/posts/:id', changePost)
 api.delete('/posts/:id', deletePost)
 api.patch('/posts/like/:id', setLikePosts)
@@ -91,6 +100,13 @@ api.post('/comments', addPostComment)
 api.get('/comments', getAllPostComments)
 api.patch('/comments/:id', changePostComment)
 api.delete('/comments/:id', deletePostComment)
+
+// Request for friends
+
+api.post('/request', addRequest)
+api.get('/my/request/:id', getMyRequest)
+api.get('/my/invite/:id', getMyInvite)
+api.patch('/call/request/:id', callRequest)
 
 
 

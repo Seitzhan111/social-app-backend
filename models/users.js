@@ -27,6 +27,10 @@ const usersSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    friends: {
+      type: Array,
+      default: [],
+    },
     phone: String,
     birthday: Date,
     activateLink: String,

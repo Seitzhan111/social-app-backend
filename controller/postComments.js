@@ -1,5 +1,5 @@
 import CommentsModel from "../models/comments.js";
-import PostsModel from "../models/posts.js";
+
 
 
 export const addPostComment = async (req, res) => {

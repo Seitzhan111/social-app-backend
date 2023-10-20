@@ -6,7 +6,7 @@ const postsSchema = new mongoose.Schema({
     },
     creatorId: {
         type: String,
-        // required: true
+        required: true
     },
     content: {
         type: String,
@@ -16,8 +16,8 @@ const postsSchema = new mongoose.Schema({
       type: String
     },
     likes: {
-        type: Number,
-        default: 0
+        type: Array,
+        default: []
     }
 }, {
     timestamps: true

@@ -1,4 +1,5 @@
 import ImagesModel from "../models/images.js";
+import PostsModel from "../models/posts.js";
 
 
 export const getAllImages = async (req, res) => {
@@ -58,9 +59,24 @@ export const deleteImages = async (req, res) => {
 
 export const setLikeImages = async (req, res) => {
     try {
+
+        const image = await ImagesModel.findById(req.params.id)
+        const userId = req.body.userId
+
+        const checkExistingLike = image.likes.some(item => item === userId)
+
+        if (!userId) {
+            return res.status(400).json({
+                message: "Идентификатор пользователя не опознан"
+            })
+        }
+
         const changedImage = await ImagesModel.findByIdAndUpdate(req.params.id, {
-            $inc: {likes: 1}
+            likes: checkExistingLike ?
+                image.likes.filter(item => item !== userId)
+                : [...image.likes, userId]
         }, {returnDocument: "after"})
+
 
         if (changedImage) {
             res.json({

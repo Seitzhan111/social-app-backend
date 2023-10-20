@@ -36,7 +36,10 @@ export const getOnePost = async (req, res) => {
 
 export const addPost = async (req, res) => {
     try {
-        const post = await PostsModel(req.body)
+
+        const creatorId = req.userId
+        const body = {...req.body, creatorId}
+        const post = await PostsModel(body)
 
         await post.save()
 
@@ -85,8 +88,21 @@ export const deletePost = async (req, res) => {
 
 export const setLikePosts = async (req, res) => {
     try {
+
+        const post = await PostsModel.findById(req.params.id)
+        const userId = req.body.userId
+
+        const checkExistingLike = post.likes.some(item => item === userId)
+
+        if (!userId) {
+            return res.status(400).json({
+                message: "Идентификатор пользователя не опознан"
+            })
+        }
+
         const changedPosts = await PostsModel.findByIdAndUpdate(req.params.id, {
-            $inc: {likes: 1}
+            likes: checkExistingLike ? post.likes.filter(item => item !== userId)
+                : [...post.likes, userId]
         }, {returnDocument: "after"})
 
         if (changedPosts) {
